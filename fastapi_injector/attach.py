@@ -48,7 +48,7 @@ def attach_injector_taskiq(
     injector.binder.bind(RequestScopeFactory, to=RequestScopeFactory, scope=singleton)
 
 
-def get_injector_instance_taskiq(state: TaskiqState, ) -> Injector:
+def get_injector_instance_taskiq(state: TaskiqState) -> Injector:
     """
     Returns the injector instance attached to the taskiq.
     """
