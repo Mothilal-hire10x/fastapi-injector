@@ -16,9 +16,13 @@ from fastapi_injector.request_scope import (
 
 __all__ = [
     "attach_injector",
+    "attach_injector_taskiq",
     "get_injector_instance",
+    "get_injector_instance_taskiq",
     "Injected",
     "SyncInjected",
+    "InjectedTaskiq",
+    "SyncInjectedTaskiq",
     "InjectorNotAttached",
     "request_scope",
     "RequestScopeOptions",
