@@ -7,9 +7,9 @@ from fastapi_injector.request_scope import RequestScopeFactory, RequestScopeOpti
 
 
 def attach_injector(
-        app: FastAPI,
-        injector: Injector,
-        options: RequestScopeOptions = RequestScopeOptions(),
+    app: FastAPI,
+    injector: Injector,
+    options: RequestScopeOptions = RequestScopeOptions(),
 ) -> None:
     """
     Call this function on app startup to attach an injector to the app.
@@ -34,9 +34,9 @@ def get_injector_instance(app: FastAPI) -> Injector:
 
 
 def attach_injector_taskiq(
-        state: TaskiqState,
-        injector: Injector,
-        options: RequestScopeOptions = RequestScopeOptions(),
+    state: TaskiqState,
+    injector: Injector,
+    options: RequestScopeOptions = RequestScopeOptions(),
 ) -> None:
     """
     Call this function on taskiq startup to attach an injector to the taskiq.
