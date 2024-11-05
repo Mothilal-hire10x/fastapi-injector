@@ -4,8 +4,8 @@ version = "1.0.0"
 description = "python-injector integration for FastAPI and Taskiq"
 license = "BSD"
 authors = [
-    "Original Author/Project",
-    "Your Organization or Team"
+    "Matyas Richter <matyas@mrichter.cz>",
+    "10xScale"
 ]
 repository = "https://github.com/10XScale-in/fastapi-injector/"
 packages = [
