@@ -5,6 +5,7 @@ import uuid
 from typing import Tuple
 
 import httpx
+from httpx import ASGIMount
 import pytest
 from fastapi import FastAPI
 from injector import Injector, InstanceProvider, inject, singleton
@@ -49,7 +50,7 @@ async def test_caches_instance(app_inj):
     ):
         assert dummy is dummy2
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         r = await client.get("/")
     assert r.status_code == status.HTTP_200_OK
 
@@ -87,7 +88,7 @@ async def test_caches_instance_nested(app_inj):
         assert dummy is not dummy2
         assert dummy is dummy2.get_dummy()
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         r = await client.get("/")
     assert r.status_code == status.HTTP_200_OK
 
@@ -112,7 +113,7 @@ async def test_doesnt_cache_across_requests(app_inj) -> None:
         assert dummy.id == dummy2.id
         return {"dummy": dummy.id}
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         r = await client.get("/")
         r2 = await client.get("/")
     assert r.status_code == status.HTTP_200_OK
@@ -137,7 +138,7 @@ async def test_doesnt_cache_across_concurrent_requests(app_inj) -> None:
         time.sleep(0.5)
         return {"dummy": dummy.id}
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         r = client.get("/")
         await asyncio.sleep(0.1)
         r2 = client.get("/")
@@ -161,7 +162,7 @@ async def test_middleware_not_added():
     def get_root(dummy: DummyInterface = Injected(DummyInterface)):
         return {"dummy": str(dummy)}
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         with pytest.raises(RequestScopeError):
             await client.get("/")
 
@@ -182,7 +183,7 @@ async def test_middleware_added_without_injector_attached():
     def get_root(dummy: DummyInterface = Injected(DummyInterface)):
         return {"dummy": str(dummy)}
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         with pytest.raises(InjectorNotAttached):
             await client.get("/")
 
@@ -207,7 +208,7 @@ async def test_request_scope_cache_cleared(app_inj):
 
     scope_instance = inj.get(RequestScope)
     assert len(scope_instance.cache) == 0
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         await client.get("/")
 
     assert len(scope_instance.cache) == 0
@@ -255,7 +256,7 @@ async def test_works_without_auto_bind():
     ):
         assert dummy is dummy2
 
-    async with httpx.AsyncClient(app=app, base_url="http://test") as client:
+    async with httpx.AsyncClient(mounts={"/": ASGIMount(app)}, base_url="http://test") as client:
         r = await client.get("/")
     assert r.status_code == status.HTTP_200_OK
 
